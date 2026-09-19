@@ -35,6 +35,10 @@ INSERT INTO shifts (employee_id, date, shift_type, start_time, end_time, store_i
 (3, CURDATE(), 'AFTERNOON', '13:30:00', '18:30:00', 1, 'CONFIRMED'),
 (4, CURDATE(), 'REST', '00:00:00', '00:00:00', 2, 'PENDING');
 
+INSERT INTO shift_swaps (id, shift_id, requester_id, target_employee_id, store_id, reason, status) VALUES
+(1, 2, 3, 1, 1, '家中临时有事，希望把今天的中班换给林青', 'PENDING_ACCEPTANCE')
+ON DUPLICATE KEY UPDATE reason=VALUES(reason);
+
 INSERT INTO transactions (type, category, amount, description, related_employee_id, store_id, date, receipt, reviewed) VALUES
 ('INCOME', 'SALES', 28600.00, '湖滨旗舰店日销售收入', NULL, 1, CURDATE(), '/receipts/sales-001.jpg', TRUE),
 ('EXPENSE', 'SALARY', 9800.00, '试用期员工工资', 3, 1, CURDATE(), '/receipts/salary-003.pdf', FALSE),

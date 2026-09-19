@@ -5,6 +5,7 @@ import { authRoutes } from './routes/auth.routes.js';
 import { dashboardRoutes } from './routes/dashboard.routes.js';
 import { employeeRoutes } from './routes/employee.routes.js';
 import { shiftRoutes } from './routes/shift.routes.js';
+import { shiftSwapRoutes } from './routes/shift-swap.routes.js';
 import { storeRoutes } from './routes/store.routes.js';
 import { transactionRoutes } from './routes/transaction.routes.js';
 import { authMiddleware } from './middlewares/auth.middleware.js';
@@ -19,6 +20,7 @@ app.get('/api/health', (_req, res) => res.json({ code: 200, message: 'success', 
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', authMiddleware, dashboardRoutes);
 app.use('/api/employees', authMiddleware, employeeRoutes);
+app.use('/api/shifts/swaps', authMiddleware, shiftSwapRoutes);
 app.use('/api/shifts', authMiddleware, shiftRoutes);
 app.use('/api/transactions', authMiddleware, transactionRoutes);
 app.use('/api/stores', authMiddleware, storeRoutes);

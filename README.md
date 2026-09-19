@@ -6,7 +6,7 @@ BizStarter 面向创业公司与小微企业，覆盖员工管理、排班调度
 
 - 管理仪表盘：收入支出对比、出勤率、门店营收 TOP、待办事项和快速入口。
 - 员工管理：花名册筛选、组织树、入职登记、详情抽屉、转正/调岗/离职入口基础结构。
-- 排班管理：周视图、自动排班、换班申请流程、月度工时统计。
+- 排班管理：周视图、自动排班、换班闭环（员工发起 → 对方确认 → 店长审批 → 原子改派并确认班次）、月度工时统计。
 - 财务管理：收支记录、记账表单、分类统计、利润报表导出。
 - 门店管理：卡片/表格视图、业绩对比、人员配置、门店详情。
 - 横切能力：JWT 认证、RBAC、按钮权限、数据范围过滤、统一异常处理、操作审计。
@@ -97,6 +97,7 @@ database/   init.sql 和 seed.sql
 | TransactionType | INCOME / EXPENSE | `frontend/src/constants/enums.ts`、`frontend/src/pages/finance/FinanceList.vue`、`frontend/src/pages/finance/FinanceForm.vue`、`frontend/src/stores/transactionStore.ts`、`frontend/src/pages/Dashboard.vue`、`backend/src/constants/enums.ts`、`backend/src/models/transaction.model.ts`、`backend/src/services/dashboard.service.ts`、`database/init.sql`、`database/seed.sql` |
 | TransactionCategory | SALARY / PURCHASE / RENT / UTILITY / SALES / OTHER | `frontend/src/constants/enums.ts`、`frontend/src/pages/finance/FinanceList.vue`、`frontend/src/pages/finance/FinanceForm.vue`、`frontend/src/stores/transactionStore.ts`、`backend/src/constants/enums.ts`、`backend/src/models/transaction.model.ts`、`database/init.sql`、`database/seed.sql` |
 | UserRole | OWNER / MANAGER / EMPLOYEE | `frontend/src/constants/enums.ts`、`frontend/src/hooks/usePermission.ts`、`frontend/src/router/guards.ts`、`frontend/src/router/routes/*.ts`、`frontend/src/main.ts`、`backend/src/constants/enums.ts`、`backend/src/constants/permissions.ts`、`backend/src/models/user.model.ts`、`backend/src/models/employee.model.ts`、`backend/src/middlewares/rbac.middleware.ts`、`backend/src/services/scope.service.ts`、`backend/src/routes/*.routes.ts`、`database/init.sql`、`database/seed.sql` |
+| ShiftSwapStatus | PENDING_ACCEPTANCE / PENDING_APPROVAL / APPROVED / REJECTED / CANCELLED | `frontend/src/constants/enums.ts`、`frontend/src/types/shift.d.ts`、`frontend/src/pages/schedule/ShiftSwapRequest.vue`、`backend/src/constants/enums.ts`、`backend/src/models/shift-swap.model.ts`、`backend/src/services/shift-swap.service.ts`、`database/init.sql`、`database/seed.sql` |
 
 ## 全局异常处理
 
@@ -104,7 +105,14 @@ database/   init.sql 和 seed.sql
 
 ## 操作日志说明
 
-后端 `audit.middleware.ts` 会审计财务新增/修改/删除、员工新增/修改/删除、排班创建/自动排班/修改、门店新增/修改/删除等关键操作，记录到 `audit_logs` 表，字段包含 `operatorId`、`action`、`target`、`oldValue`、`newValue`、`ip`、`timestamp`。
+后端 `audit.middleware.ts` 会审计财务新增/修改/删除、员工新增/修改/删除、排班创建/自动排班/修改、换班申请/审批、门店新增/修改/删除等关键操作，记录到 `audit_logs` 表，字段包含 `operatorId`、`action`、`target`、`oldValue`、`newValue`、`ip`、`timestamp`。
+
+## 换班闭环说明
+
+- 员工仅能为本人当周（周一至周日）班次发起换班，目标员工须同店且当天无有效班次（REST 休息班除外）。
+- 对方接受前原班次保持有效；同一班次同一时间只允许一条进行中的申请（`PENDING_ACCEPTANCE` / `PENDING_APPROVAL`）。
+- 对方接受后进入店长审批；审批通过与班次改派在同一事务内完成，改派后班次状态置为 `CONFIRMED`；驳回或申请人撤回均保留原排班。
+- 接受与审批均通过条件更新/行锁保证并发下只成功一次，重复操作返回 409。
 
 ## RBAC 权限矩阵
 
