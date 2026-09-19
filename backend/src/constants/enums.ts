@@ -25,6 +25,14 @@ export const TransactionCategory = {
   OTHER: 'OTHER'
 } as const;
 
+export const ShiftSwapStatus = {
+  PENDING_TARGET: 'PENDING_TARGET',
+  PENDING_APPROVAL: 'PENDING_APPROVAL',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
+} as const;
+
 export const UserRole = {
   OWNER: 'OWNER',
   MANAGER: 'MANAGER',
@@ -35,4 +43,5 @@ export type EmployeeStatusValue = (typeof EmployeeStatus)[keyof typeof EmployeeS
 export type ShiftTypeValue = (typeof ShiftType)[keyof typeof ShiftType];
 export type TransactionTypeValue = (typeof TransactionType)[keyof typeof TransactionType];
 export type TransactionCategoryValue = (typeof TransactionCategory)[keyof typeof TransactionCategory];
+export type ShiftSwapStatusValue = (typeof ShiftSwapStatus)[keyof typeof ShiftSwapStatus];
 export type UserRoleValue = (typeof UserRole)[keyof typeof UserRole];

@@ -52,6 +52,22 @@ export const TransactionCategoryLabel = {
   [TransactionCategory.OTHER]: '其他'
 } as const;
 
+export const ShiftSwapStatus = {
+  PENDING_TARGET: 'PENDING_TARGET',
+  PENDING_APPROVAL: 'PENDING_APPROVAL',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
+} as const;
+
+export const ShiftSwapStatusLabel = {
+  [ShiftSwapStatus.PENDING_TARGET]: '待对方确认',
+  [ShiftSwapStatus.PENDING_APPROVAL]: '待店长审批',
+  [ShiftSwapStatus.APPROVED]: '已通过',
+  [ShiftSwapStatus.REJECTED]: '已驳回',
+  [ShiftSwapStatus.CANCELLED]: '已撤回'
+} as const;
+
 export const UserRole = {
   OWNER: 'OWNER',
   MANAGER: 'MANAGER',
